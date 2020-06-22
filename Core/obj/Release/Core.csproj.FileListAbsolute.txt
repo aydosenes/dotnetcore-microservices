@@ -1,0 +1,2 @@
+C:\Users\aydos\Desktop\repositories\SolarBankersTurkey\Core\obj\Release\Core.csprojAssemblyReference.cache
+C:\Users\aydos\Desktop\repositories\SolarBankersTurkey\Core\obj\Release\Core.csproj.CoreCompileInputs.cache

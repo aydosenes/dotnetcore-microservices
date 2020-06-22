@@ -1,0 +1,3 @@
+C:\Users\aydos\Desktop\repositories\SolarBankersTurkey\Business\obj\Debug\Business.csprojAssemblyReference.cache
+C:\Users\aydos\Desktop\repositories\SolarBankersTurkey\Business\obj\Debug\Business.csproj.CoreCompileInputs.cache
+C:\Users\aydos\Desktop\repositories\SolarBankersTurkey\Business\obj\Debug\Business.exe.config
