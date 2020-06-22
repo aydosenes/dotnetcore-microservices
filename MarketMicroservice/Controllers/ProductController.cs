@@ -56,7 +56,7 @@ namespace MarketMicroservice.Controllers
         }
 
         [HttpPost("buy")]
-        public async Task<IActionResult> BuyProduct(List<string> CodeList)
+        public async Task<IActionResult> BuyProduct([FromBody]string[] CodeList)
         {
             var result = await _productService.BuyProduct(CodeList);
 

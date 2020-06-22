@@ -9,6 +9,6 @@ namespace Market.Business.Services
 {
     public interface ISaleService
     {
-        Task<IDataResult<IEnumerable<Bill>>> Billing(List<string> CodeList);
+        Task<IDataResult<Bill>> Billing(List<string> CodeList);
     }
 }

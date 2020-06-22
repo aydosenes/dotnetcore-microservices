@@ -1,4 +1,5 @@
 ﻿using Market.Business.Services;
+using Market.Core.Data.Entities;
 using MarketMicroservice.Business.Models;
 using MarketMicroservice.Data;
 using MarketMicroservice.Data.Entities;
@@ -45,7 +46,7 @@ namespace MarketMicroservice.Business.Services
             }
         }
 
-        public async Task<IDataResult<Product>> BuyProduct(List<string> CodeList)
+        public async Task<IDataResult<Bill>> BuyProduct(string[] CodeList)
         {
             try
             {
@@ -54,35 +55,40 @@ namespace MarketMicroservice.Business.Services
                 bool isNotNull = CodeList != null ? true : false;
                 if (isNotNull)
                 {
-                    for (int i = 0; i <= CodeList.Count; i++)
+                    for (int i = 0; i < CodeList.Length; i++)
                     {
-                        var product = await _dbContext.Products.Where(x => x.Code == CodeList.ElementAt(i)).FirstOrDefaultAsync();
+                        var product = await _dbContext.Products.Where(x => x.Code == CodeList[i]).FirstOrDefaultAsync();
                         if (product != null && product.StockAmount != 0)
                         {
                             product.StockAmount--;
                             product.UpdatedDate = DateTime.UtcNow + TimeSpan.FromHours(3);
                             price += product.Price;
-                            var billResult = _saleService.Billing(CodeList);
+                            
                             await _dbContext.SaveChangesAsync();
                         }
-                        else
+                        if(product != null && product.StockAmount == 0)
                         {
                             OutOfStock.Add(product.Code.ToString());
                         }
                     }
-                    if (OutOfStock == null)
+                    if (OutOfStock.Count > 0)
                     {
-                        return new SuccessDataResult<Product>("Satış gerçekleşti. Toplam fiyat: " + price.ToString());
+                        return new FailDataResult<Bill>(OutOfStock + ": Bu ürünler stokta yok.");
+                        
                     }
                     else
-                        return new FailDataResult<Product>(OutOfStock.ToList() + ": Bu ürünler stokta yok.");
+                    {
+                        var billResult = _saleService.Billing(CodeList.ToList()).Result;
+                        return new SuccessDataResult<Bill>(billResult.Data);
+                    }
+                        
 
                 }
-                return new FailDataResult<Product>("Liste boş.");
+                return new FailDataResult<Bill>("Liste boş.");
             }
             catch (Exception ex)
             {
-                return new FailDataResult<Product>("Satış gerçekleşmedi. " + ex.Message.ToString());
+                return new FailDataResult<Bill>("Satış gerçekleşmedi. " + ex.Message.ToString());
             }
         }
 

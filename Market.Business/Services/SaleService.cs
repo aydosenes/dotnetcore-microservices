@@ -1,5 +1,6 @@
 ﻿using Market.Core.Data.Entities;
 using MarketMicroservice.Data;
+using MarketMicroservice.Data.Entities;
 using MarketMicroservice.Results;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,43 +21,50 @@ namespace Market.Business.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IDataResult<IEnumerable<Bill>>> Billing(List<string> CodeList)
+        public async Task<IDataResult<Bill>> Billing(List<string> CodeList)
         {
             try
             {
                 var _bill = new Bill();
+                //var _product = new Product();
                 object[] bill = new object[_bill.GetType().GetProperties().Length];
+                Product[] codes = new Product[CodeList.Count];
 
                 _bill.Date = DateTime.UtcNow + TimeSpan.FromHours(3);
                 _bill.IsCash = true;
                 _bill.Sum = 0.0;
-                for (int i = 0; i <= CodeList.Count; i++)
+                for (int i = 0; i < CodeList.Count; i++)
                 {
                     var product = await _dbContext.Products.Where(x => x.Code == CodeList.ElementAt(i)).FirstOrDefaultAsync();
-                    if (product != null && product.StockAmount != 0)
+                    if (product != null)
                     {
-                        _bill.Products.Add(product);
+                        codes[i] = product;
                         _bill.Sum += product.Price;
-                        await _dbContext.SaveChangesAsync();
+
                     }
                     else
                     {
-                        return new FailDataResult<IEnumerable<Bill>>("Faturalanacak ürün bulunamadı.");
+                        return new FailDataResult<Bill>("Faturalanacak ürün bulunamadı.");
                     }
                 }
-
-                for (int i = 0; i <= _bill.GetType().GetProperties().Length; i++)
+                if(codes != null)
                 {
-                    bill[i] = _bill.GetType().GetProperties().GetValue(i).ToString();
+                    _bill.Products = codes.ToList();
+                    await _dbContext.SaveChangesAsync();
+
                 }
+                //for (int i = 0; i < bill.Length; i++)
+                //{
+                //    bill[i] = _bill.GetType().GetProperties().GetValue(i);
+                //}
 
-                var result = ((IEnumerable)bill).Cast<Bill>().ToList();
+                //((IEnumerable)bill).Cast<Bill>().ToList();
 
-                return new SuccessDataResult<IEnumerable<Bill>>(result);
+                return new SuccessDataResult<Bill>(_bill);
             }
             catch (Exception ex)
             {
-                return new FailDataResult<IEnumerable<Bill>>("Faturalama Hatasi." + ex.Message.ToString());
+                return new FailDataResult<Bill>("Faturalama Hatasi." + ex.Message.ToString());
             }
 
         }
