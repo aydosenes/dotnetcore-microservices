@@ -1,4 +1,5 @@
-﻿using Market.Core.Data.Entities;
+﻿using Market.Business.Models;
+using Market.Core.Data.Entities;
 using Market.Core.Repository;
 using MarketMicroservice.Business.Models;
 using MarketMicroservice.Data.Entities;
@@ -16,7 +17,7 @@ namespace MarketMicroservice.Business.Services
         Task<IDataResult<Product>> GetProductById(int id);
         Task<IDataResult<Product>> AddProduct(ProductModel product);
         Task<IDataResult<Bill>> BuyProduct(string[] CodeList);
-        Task<IDataResult<Product>> UpdateProduct(int id, ProductModel product);
+        Task<IDataResult<Product>> UpdateProduct(UpdateModel product);
         Task<IDataResult<Product>> UpdateStock(int id, int stock);
         Task<IDataResult<Product>> DeleteProduct(int id);
 

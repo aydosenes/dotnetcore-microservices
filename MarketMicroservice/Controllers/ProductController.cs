@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Market.Business.Models;
 using MarketMicroservice.Business.Models;
 using MarketMicroservice.Business.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -68,10 +69,10 @@ namespace MarketMicroservice.Controllers
 
         }
 
-        [HttpPut("puptade/{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductModel product)
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateModel product)
         {
-            var result = await _productService.UpdateProduct(id,product);
+            var result = await _productService.UpdateProduct(product);
 
             if (result.Success)
             {
@@ -81,7 +82,7 @@ namespace MarketMicroservice.Controllers
 
         }
 
-        [HttpPut("suptade/{id}")]
+        [HttpPost("stockuptade")]
         public async Task<IActionResult> UpdateStock(int id, int stock)
         {
             var result = await _productService.UpdateStock(id,stock);

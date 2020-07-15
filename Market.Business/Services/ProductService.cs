@@ -1,4 +1,5 @@
-﻿using Market.Business.Services;
+﻿using Market.Business.Models;
+using Market.Business.Services;
 using Market.Core.Data.Entities;
 using MarketMicroservice.Business.Models;
 using MarketMicroservice.Data;
@@ -34,7 +35,7 @@ namespace MarketMicroservice.Business.Services
                 _product.InsertionDate = DateTime.UtcNow + TimeSpan.FromHours(3);
                 _product.UpdatedDate = DateTime.UtcNow + TimeSpan.FromHours(3);
                 _product.IsRejected = false;
-                _product.StockAmount = product.StockAmount;
+                _product.StockAmount += product.StockAmount + 1;
                 var result = await _dbContext.Products.AddAsync(_product);
                 await _dbContext.SaveChangesAsync();
                 return new SuccessDataResult<Product>(_product);
@@ -142,16 +143,17 @@ namespace MarketMicroservice.Business.Services
             }
         }
 
-        public async Task<IDataResult<Product>> UpdateProduct(int id, ProductModel product)
+        public async Task<IDataResult<Product>> UpdateProduct(UpdateModel product)
         {
             try
             {
-                var _product = await _dbContext.Products.Where(x => x.ProductId == id).FirstOrDefaultAsync();
+                var _product = await _dbContext.Products.Where(x => x.ProductId == product.ProductId).FirstOrDefaultAsync();
                 _product.Code = product.Code;
                 _product.Name = product.Name;
                 _product.Price = product.Price;
                 _product.UpdatedDate = DateTime.UtcNow + TimeSpan.FromHours(3);
                 _product.IsRejected = product.IsRejected;
+                _product.StockAmount = product.StockAmount;
 
                 //_dbContext.Update(_product);
                 await _dbContext.SaveChangesAsync();
